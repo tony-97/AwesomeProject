@@ -1,28 +1,55 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useContext } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import { AuthProvider, AuthContext } from "./src/context/AuthContext";
+import { FavoritesProvider } from "./src/context/FavoritesContext";
+import LoginScreen from "./src/screens/LoginScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import FavoritesScreen from "./src/screens/FavoritesScreen";
+import ProfileScreen from "./src/screens/ProfileScreen";
+import PokemonDetailScreen from "./src/screens/PokemonDetailScreen";
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
+function Tabs() {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
-    </View>
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Favoritos" component={FavoritesScreen} />
+      <Tab.Screen name="Mi Perfil" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+function MainNavigator() {
+  const { user } = useContext(AuthContext);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!user ? (
+          <Stack.Screen name="Login" component={LoginScreen} />
+        ) : (
+          <>
+            <Stack.Screen name="Tabs" component={Tabs} />
+            <Stack.Screen
+              name="PokemonDetail"
+              component={PokemonDetailScreen}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <FavoritesProvider>
+        <MainNavigator />
+      </FavoritesProvider>
+    </AuthProvider>
+  );
+}
