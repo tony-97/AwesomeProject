@@ -7,14 +7,15 @@ import HomeScreen from '../screens/HomeScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 
 import LoginScreen from '../screens/LoginScreen';
+import DetailScreen from '../screens/DetailScreen';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 
 export type RootStackParamList = {
   Login: undefined;
   Home: undefined;
-
   Favorites: undefined;
+  Detail: { pokemon: any };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -32,8 +33,8 @@ export const AppNavigator = () => {
       ) : (
         <>
           <Stack.Screen name="Home" component={HomeScreen} />
-
           <Stack.Screen name="Favorites" component={FavoritesScreen} />
+          <Stack.Screen name="Detail" component={DetailScreen} />
         </>
       )}
     </Stack.Navigator>
