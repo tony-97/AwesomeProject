@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Button,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFavorite, removeFavorite } from '../store/actions';
@@ -26,6 +27,14 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
   const favorites = useSelector((state: RootState) => state.favorites);
   const isFavorite = favorites.some(f => f.name === pokemon.name);
 
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFavorite(pokemon.name));
+    } else {
+      dispatch(addFavorite(pokemon));
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
@@ -35,6 +44,14 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
         style={styles.image}
       />
       <Text style={styles.name}>{pokemon.name}</Text>
+      <TouchableOpacity
+        onPress={handleToggleFavorite}
+        style={{ marginBottom: 16 }}
+      >
+        <Text style={{ fontSize: 32, alignSelf: 'center' }}>
+          {isFavorite ? '★' : '☆'}
+        </Text>
+      </TouchableOpacity>
       <Text style={styles.types}>
         Tipos: {pokemon.types.map(t => t.type.name).join(', ')}
       </Text>
@@ -48,14 +65,6 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
       {pokemon.abilities.map(a => (
         <Text key={a.ability.name}>{a.ability.name}</Text>
       ))}
-      <Button
-        title={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-        onPress={() =>
-          isFavorite
-            ? dispatch(removeFavorite(pokemon.name))
-            : dispatch(addFavorite(pokemon))
-        }
-      />
     </ScrollView>
   );
 };
