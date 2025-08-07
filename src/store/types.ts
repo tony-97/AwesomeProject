@@ -4,12 +4,14 @@ export interface AppState {
   favorites: Pokemon[];
   isLoggedIn: boolean;
   user: string | null;
+  loginError?: string | null;
 }
 export const ADD_FAVORITE = 'ADD_FAVORITE';
 
 export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 
 export const LOGIN = 'LOGIN';
+export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGOUT = 'LOGOUT';
 
 interface AddFavoriteAction {
@@ -33,8 +35,14 @@ interface LogoutAction {
   type: typeof LOGOUT;
 }
 
+interface LoginErrorAction {
+  type: typeof LOGIN_ERROR;
+  payload: string; // error message
+}
+
 export type AppActions =
   | AddFavoriteAction
   | RemoveFavoriteAction
   | LoginAction
-  | LogoutAction;
+  | LogoutAction
+  | LoginErrorAction;

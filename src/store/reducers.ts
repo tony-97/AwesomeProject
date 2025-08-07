@@ -4,6 +4,7 @@ import {
   ADD_FAVORITE,
   REMOVE_FAVORITE,
   LOGIN,
+  LOGIN_ERROR,
   LOGOUT,
 } from './types';
 
@@ -11,6 +12,7 @@ const initialState: AppState = {
   favorites: [],
   isLoggedIn: false,
   user: null,
+  loginError: null,
 };
 
 export const appReducer = (
@@ -34,12 +36,21 @@ export const appReducer = (
         ...state,
         isLoggedIn: true,
         user: action.payload,
+        loginError: null,
+      };
+    case LOGIN_ERROR:
+      return {
+        ...state,
+        isLoggedIn: false,
+        user: null,
+        loginError: action.payload,
       };
     case LOGOUT:
       return {
         ...state,
         isLoggedIn: false,
         user: null,
+        loginError: null,
       };
     default:
       return state;

@@ -5,6 +5,7 @@ import {
   REMOVE_FAVORITE,
   LOGIN,
   LOGOUT,
+  LOGIN_ERROR,
   AppActions,
 } from './types';
 
@@ -20,10 +21,19 @@ export const removeFavorite = (name: string): AppActions => ({
   payload: name,
 });
 
-export const login = (username: string): AppActions => ({
-  type: LOGIN,
-  payload: username,
-});
+export const login = (username: string, password: string): AppActions => {
+  if (username === 'admin' && password === '1234') {
+    return {
+      type: LOGIN,
+      payload: username,
+    };
+  } else {
+    return {
+      type: LOGIN_ERROR,
+      payload: 'Usuario o contraseña incorrectos',
+    };
+  }
+};
 
 export const logout = (): AppActions => ({
   type: LOGOUT,
