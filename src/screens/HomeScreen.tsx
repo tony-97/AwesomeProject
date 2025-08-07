@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from 'react';
-
-import { View, FlatList, Button, Image, Text } from 'react-native';
-
+import { View, FlatList } from 'react-native';
 import axios from 'axios';
-
-import { Pokemon } from '../types/pokemon';
-
-import { PokemonItem } from '../components/PokemonItem';
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import { RootState } from '../store/store';
-
 import { addFavorite, removeFavorite } from '../store/actions';
-
 import { StackNavigationProp } from '@react-navigation/stack';
-
 import { RootStackParamList } from '../navigation/AppNavigator';
+import PokemonListItem from '../components/PokemonListItem';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -24,9 +14,7 @@ type Props = {
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [pokemon, setPokemon] = useState<any[]>([]);
-
   const favorites = useSelector((state: RootState) => state.favorites);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,26 +41,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         data={pokemon}
         keyExtractor={item => item.name}
         renderItem={({ item }) => (
-          <View
-            style={{ flexDirection: 'row', alignItems: 'center', padding: 8 }}
-          >
-            <Image
-              source={{ uri: item.sprites?.front_default }}
-              style={{ width: 60, height: 60, marginRight: 12 }}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 18, textTransform: 'capitalize' }}>
-                {item.name}
-              </Text>
-              <Text style={{ color: '#555' }}>
-                {item.types.map((t: any) => t.type.name).join(', ')}
-              </Text>
-            </View>
-            <Button
-              title="Ver Detalle"
-              onPress={() => navigation.navigate('Detail', { pokemon: item })}
-            />
-          </View>
+          <PokemonListItem
+            pokemon={item}
+            onPress={() => navigation.navigate('Detail', { pokemon: item })}
+            onRemove={() => dispatch(removeFavorite(item.name))}
+            showRemove={favorites.some(f => f.name === item.name)}
+          />
         )}
       />
     </View>
