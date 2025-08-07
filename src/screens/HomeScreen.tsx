@@ -44,8 +44,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <PokemonListItem
             pokemon={item}
             onPress={() => navigation.navigate('Detail', { pokemon: item })}
-            onRemove={() => dispatch(removeFavorite(item.name))}
-            showRemove={favorites.some(f => f.name === item.name)}
+            onToggleFavorite={() => {
+              if (favorites.some(f => f.name === item.name)) {
+                dispatch(removeFavorite(item.name));
+              } else {
+                dispatch(addFavorite(item));
+              }
+            }}
+            isFavorite={favorites.some(f => f.name === item.name)}
           />
         )}
       />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, Text, Button, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TouchableOpacity } from 'react-native';
 
 interface PokemonType {
   type: { name: string };
@@ -14,15 +14,15 @@ interface Pokemon {
 interface Props {
   pokemon: Pokemon;
   onPress: () => void;
-  onRemove?: () => void;
-  showRemove?: boolean;
+  onToggleFavorite?: () => void;
+  isFavorite?: boolean;
 }
 
 const PokemonListItem: React.FC<Props> = ({
   pokemon,
   onPress,
-  onRemove,
-  showRemove,
+  onToggleFavorite,
+  isFavorite,
 }) => (
   <TouchableOpacity
     onPress={onPress}
@@ -41,8 +41,10 @@ const PokemonListItem: React.FC<Props> = ({
         {pokemon.types?.map(t => t.type.name).join(', ')}
       </Text>
     </View>
-    {showRemove && onRemove && (
-      <Button title="Quitar" onPress={onRemove} color="#d00" />
+    {onToggleFavorite && (
+      <TouchableOpacity onPress={onToggleFavorite} style={{ marginLeft: 8 }}>
+        <Text style={{ fontSize: 28 }}>{isFavorite ? '★' : '☆'}</Text>
+      </TouchableOpacity>
     )}
   </TouchableOpacity>
 );
