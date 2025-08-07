@@ -1,34 +1,36 @@
-import React, { useContext } from "react";
-import { View, FlatList, Text, Image, Button } from "react-native";
-import { FavoritesContext } from "../context/FavoritesContext";
+import React from 'react';
 
-export default function FavoritesScreen() {
-  const { favorites, removeFavorite } = useContext(FavoritesContext);
+import { View, FlatList } from 'react-native';
 
-  if (favorites.length === 0) {
-    return (
-      <Text style={{ textAlign: "center", marginTop: 20 }}>
-        No hay favoritos
-      </Text>
-    );
-  }
+import { useDispatch, useSelector } from 'react-redux';
+
+import { RootState } from '../store/store';
+
+import { removeFavorite } from '../store/actions';
+
+import { PokemonItem } from '../components/PokemonItem';
+
+const FavoritesScreen: React.FC = () => {
+  const favorites = useSelector((state: RootState) => state.favorites);
+
+  const dispatch = useDispatch();
 
   return (
-    <FlatList
-      data={favorites}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <View
-          style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
-        >
-          <Image
-            source={{ uri: item.image }}
-            style={{ width: 50, height: 50, marginRight: 10 }}
+    <View>
+      <FlatList
+        data={favorites}
+        keyExtractor={item => item.name}
+        renderItem={({ item }) => (
+          <PokemonItem
+            pokemon={item}
+            isFavorite
+            onAdd={() => {}}
+            onRemove={() => dispatch(removeFavorite(item.name))}
           />
-          <Text style={{ flex: 1 }}>{item.name}</Text>
-          <Button title="Eliminar" onPress={() => removeFavorite(item.id)} />
-        </View>
-      )}
-    />
+        )}
+      />
+    </View>
   );
-}
+};
+
+export default FavoritesScreen;

@@ -1,43 +1,59 @@
-import React, { useEffect, useState } from "react";
-import { View, FlatList, ActivityIndicator } from "react-native";
-import PokemonCard from "../components/PokemonCard";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from 'react';
 
-export default function HomeScreen() {
-  const [pokemons, setPokemons] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const navigation = useNavigation();
+import { View, FlatList, Button } from 'react-native';
+
+import { fetchPokemonList } from '../api/pokeapi';
+
+import { Pokemon } from '../types/pokemon';
+
+import { PokemonItem } from '../components/PokemonItem';
+
+import { useDispatch, useSelector } from 'react-redux';
+
+import { RootState } from '../store/store';
+
+import { addFavorite, removeFavorite } from '../store/actions';
+
+import { StackNavigationProp } from '@react-navigation/stack';
+
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+type Props = {
+  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+};
+
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
+  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
+
+  const favorites = useSelector((state: RootState) => state.favorites);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${page * 20}`)
-      .then((res) => res.json())
-      .then(async (data) => {
-        const details = await Promise.all(
-          data.results.map((p: any) => fetch(p.url).then((res) => res.json()))
-        );
-        setPokemons((prev) => [...prev, ...details]);
-        setLoading(false);
-      });
-  }, [page]);
+    fetchPokemonList().then(setPokemon);
+  }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
+      <Button
+        title="View Favorites"
+        onPress={() => navigation.navigate('Favorites')}
+      />
+
       <FlatList
-        data={pokemons}
-        keyExtractor={(item) => item.id.toString()}
+        data={pokemon}
+        keyExtractor={item => item.name}
         renderItem={({ item }) => (
-          <PokemonCard
+          <PokemonItem
             pokemon={item}
-            onPress={() =>
-              navigation.navigate("PokemonDetail", { pokemon: item })
-            }
+            isFavorite={favorites.some(f => f.name === item.name)}
+            onAdd={() => dispatch(addFavorite(item))}
+            onRemove={() => dispatch(removeFavorite(item.name))}
           />
         )}
-        onEndReached={() => setPage((p) => p + 1)}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={loading ? <ActivityIndicator /> : null}
       />
     </View>
   );
-}
+};
+
+export default HomeScreen;
