@@ -49,11 +49,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View>
-      <Button
-        title="View Favorites"
-        onPress={() => navigation.navigate('Favorites')}
-      />
-
       <FlatList
         data={pokemon}
         keyExtractor={item => item.name}
