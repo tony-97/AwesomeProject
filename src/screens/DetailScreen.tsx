@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Button,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFavorite, removeFavorite } from '../store/actions';
@@ -15,6 +14,7 @@ import { Pokemon } from '../types/pokemon';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import FavoriteIcon from '../components/FavoriteIcon';
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Detail'>;
@@ -44,25 +44,23 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
         style={styles.image}
       />
       <Text style={styles.name}>{pokemon.name}</Text>
-      <TouchableOpacity
+      <FavoriteIcon
+        isFavorite={isFavorite}
         onPress={handleToggleFavorite}
-        style={{ marginBottom: 16 }}
-      >
-        <Text style={{ fontSize: 32, alignSelf: 'center' }}>
-          {isFavorite ? '★' : '☆'}
-        </Text>
-      </TouchableOpacity>
+        size={32}
+        style={{ marginBottom: 16, alignSelf: 'center' }}
+      />
       <Text style={styles.types}>
-        Tipos: {pokemon.types.map(t => t.type.name).join(', ')}
+        Tipos: {pokemon.types.map((t: any) => t.type.name).join(', ')}
       </Text>
       <Text style={styles.section}>Estadísticas:</Text>
-      {pokemon.stats.map(stat => (
+      {pokemon.stats.map((stat: any) => (
         <Text key={stat.stat.name}>
           {stat.stat.name}: {stat.base_stat}
         </Text>
       ))}
       <Text style={styles.section}>Habilidades:</Text>
-      {pokemon.abilities.map(a => (
+      {pokemon.abilities.map((a: any) => (
         <Text key={a.ability.name}>{a.ability.name}</Text>
       ))}
     </ScrollView>

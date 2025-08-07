@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Image, Text, TouchableOpacity } from 'react-native';
+import FavoriteIcon from './FavoriteIcon';
 
 interface PokemonType {
   type: { name: string };
@@ -42,9 +43,11 @@ const PokemonListItem: React.FC<Props> = ({
       </Text>
     </View>
     {onToggleFavorite && (
-      <TouchableOpacity onPress={onToggleFavorite} style={{ marginLeft: 8 }}>
-        <Text style={{ fontSize: 28 }}>{isFavorite ? '★' : '☆'}</Text>
-      </TouchableOpacity>
+      <FavoriteIcon
+        isFavorite={!!isFavorite}
+        onPress={onToggleFavorite}
+        style={{ marginLeft: 8 }}
+      />
     )}
   </TouchableOpacity>
 );
