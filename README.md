@@ -45,6 +45,11 @@ PokeExplorer es una aplicación móvil hecha con **React Native** que utiliza la
    ```
    > Si usas iOS por primera vez, ejecuta `bundle install` y `bundle exec pod install` en la carpeta `ios`.
 
+## Inicio de sesión
+
+> **Usuario:** `admin`  
+> **Contraseña:** `1234`
+
 ## Estructura principal
 
 - `src/screens/` — Pantallas principales (Home, Favoritos, Perfil, Login, Detalle)
