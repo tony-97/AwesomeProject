@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList } from 'react-native';
-import axios from 'axios';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { addFavorite, removeFavorite } from '../store/actions';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import PokemonListItem from '../components/PokemonListItem';
+import { fetchPokemonList } from '../api/pokeapi';
+
+const PAGE_SIZE = 20;
 
 type Props = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -14,25 +16,31 @@ type Props = {
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [pokemon, setPokemon] = useState<any[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const favorites = useSelector((state: RootState) => state.favorites);
   const dispatch = useDispatch();
 
+  const loadMore = useCallback(async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    const data = await fetchPokemonList(offset, PAGE_SIZE);
+    const detailed = await Promise.all(
+      data.results.map(async (p: any) => {
+        const res = await fetch(p.url);
+        return await res.json();
+      }),
+    );
+    setPokemon(prev => [...prev, ...detailed]);
+    setOffset(prev => prev + PAGE_SIZE);
+    setHasMore(!!data.next);
+    setLoading(false);
+  }, [offset, loading, hasMore]);
+
   useEffect(() => {
-    const fetchList = async () => {
-      const response = await axios.get(
-        'https://pokeapi.co/api/v2/pokemon?limit=50',
-      );
-      const results = response.data.results;
-      // Fetch details for each pokemon
-      const detailed = await Promise.all(
-        results.map(async (p: any) => {
-          const res = await axios.get(p.url);
-          return res.data;
-        }),
-      );
-      setPokemon(detailed);
-    };
-    fetchList();
+    loadMore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -54,6 +62,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             isFavorite={favorites.some(f => f.name === item.name)}
           />
         )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loading ? <ActivityIndicator size="large" /> : null
+        }
       />
     </View>
   );
