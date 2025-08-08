@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, ActivityIndicator } from 'react-native';
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import { addFavorite, removeFavorite } from '../store/actions';
@@ -7,6 +13,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import PokemonListItem from '../components/PokemonListItem';
 import { fetchPokemonList } from '../api/pokeapi';
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
 const PAGE_SIZE = 20;
 
@@ -44,7 +51,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <MaterialDesignIcons
+          name="pokemon-go"
+          size={32}
+          color="#1976D2"
+          style={{ marginRight: 8 }}
+        />
+        <Text style={styles.title}>Pokédex</Text>
+      </View>
       <FlatList
         data={pokemon}
         keyExtractor={item => item.name}
@@ -65,11 +81,37 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
-          loading ? <ActivityIndicator size="large" /> : null
+          loading ? <ActivityIndicator size="large" color="#1976D2" /> : null
         }
+        contentContainerStyle={styles.list}
       />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+    elevation: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1976D2',
+    letterSpacing: 1,
+  },
+  list: {
+    padding: 8,
+  },
+});
 
 export default HomeScreen;
