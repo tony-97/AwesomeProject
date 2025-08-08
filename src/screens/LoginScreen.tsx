@@ -44,7 +44,7 @@ const LoginScreen: React.FC = () => {
       />
       <View style={styles.passwordRow}>
         <TextInput
-          style={[styles.input, { flex: 1, color: showPassword ? '#222' : '#222' }]}
+          style={[styles.input, { flex: 1, color: '#222' }]}
           placeholder="Contraseña"
           value={password}
           onChangeText={setPassword}
